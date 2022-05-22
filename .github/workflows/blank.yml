@@ -22,6 +22,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
+    - run: npm install gulp
     - run: npx gulp dist
     - run: cd dist/ && zip -r ${{ env.theme_name }}.zip ${{ env.theme_name }}/ && mv ${{ env.theme_name }}.zip ${GITHUB_WORKSPACE}
 
