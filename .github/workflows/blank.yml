@@ -21,4 +21,4 @@ jobs:
           script: |
             cd ${{ secrets.SERVER_DEPLOY_DIR }}
             git pull origin main
-            cp -r ${{ secrets.SERVER_DEPLOY_DIR }}* ${{ secrets.SERVER_DEPLOY_DIR }}
+            #cp -r ${{ secrets.SERVER_DEPLOY_DIR }}* ${{ secrets.SERVER_DEPLOY_DIR }}
