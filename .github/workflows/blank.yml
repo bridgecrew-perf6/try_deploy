@@ -10,11 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v1
+      - uses: actions/checkout@v2
+      - name: Deploy
+        uses: appleboy/ssh-action@master
         with:
-          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known-hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Git pull
-        run: ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'cd ${{ secrets.SERVER_DEPLOY_DIR }}; and git pull origin main'
-    
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.SERVER_DEPLOY_DIR }}
+            git pull origin main
