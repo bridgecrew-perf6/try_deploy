@@ -1,22 +1,37 @@
-name: CI
-
+name: Deploy to Server
 on:
   push:
     branches:
       - main
 
+env:
+  theme_name: my-theme
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [12.x]
+
     steps:
-      - name: Deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ${{ secrets.SERVER_DEPLOY_DIR }}
-            git pull origin main
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npx gulp dist
+    - run: cd dist/ && zip -r ${{ env.theme_name }}.zip ${{ env.theme_name }}/ && mv ${{ env.theme_name }}.zip ${GITHUB_WORKSPACE}
+
+    - name: rsync deployments
+      uses: burnett01/rsync-deployments@4.1
+      with:
+        switches: -avzr
+        path: ${{ env.theme_name }}.zip
+        remote_path: ${{ secrets.SERVER_DEPLOY_DIR }}
+        remote_host: ${{ secrets.SERVER_HOST }}
+        remote_port: ${{ secrets.SSH_PORT }}
+        remote_user: ${{ secrets.SERVER_USERNAME }}
+        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
