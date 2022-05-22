@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Remove File
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: ${{ secrets.FTP_SERVER_DIR }}
+
       - uses: actions/checkout@v2
 
       - name: Sync files
@@ -21,3 +26,5 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
+
+
