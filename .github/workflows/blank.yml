@@ -14,8 +14,8 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@3.0.0
         with:
-          ftp-server: ${{ secrets.FTP_HOST }}
-          ftp-username: ${{ secrets.FTP_USERNAME }}
-          ftp-password: ${{ secrets.FTP_PASSWORD }}
-          git-ftp-args: --remote-root ${{ secrets.FTP_REMOTE_ROOT }}
+          ftp-server: ftp.lolipop.jp
+          ftp-username: boo.jp-daysweet
+          ftp-password: ABcd1234
+          git-ftp-args: --remote-root /
           local-dir: public
