@@ -21,10 +21,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm install gulp
-    - run: npx gulp dist
-    - run: cd dist/ && zip -r ${{ env.theme_name }}.zip ${{ env.theme_name }}/ && mv ${{ env.theme_name }}.zip ${GITHUB_WORKSPACE}
+    - run: zip -r ${{ env.theme_name }}.zip ${{ env.theme_name }}/ && mv ${{ env.theme_name }}.zip ${GITHUB_WORKSPACE}
 
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.1
