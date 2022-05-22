@@ -1,35 +1,39 @@
-name: Deploy to Server
+name: GitHub Actions CI
+
 on:
   push:
     branches:
       - main
 
-env:
-  theme_name: my-theme
-
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x]
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: zip -r ${{ env.theme_name }}.zip . -i ${{ env.theme_name }}/ && mv ${{ env.theme_name }}.zip ${GITHUB_WORKSPACE}
 
-    - name: rsync deployments
-      uses: burnett01/rsync-deployments@4.1
-      with:
-        switches: -avzr
-        path: ${{ env.theme_name }}.zip
-        remote_path: ${{ secrets.SERVER_DEPLOY_DIR }}
-        remote_host: ${{ secrets.SERVER_HOST }}
-        remote_port: ${{ secrets.SSH_PORT }}
-        remote_user: ${{ secrets.SERVER_USERNAME }}
-        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: yarn install
+      # ssh接続のための接続
+      env:
+        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 700 ~/.ssh/id_rsa
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/id_rsa
+        ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+        yarn install
+
+    - name: Run ESLint
+      run: yarn lint
+ 
+    - name: Run Test
+      run: yarn test:rules
