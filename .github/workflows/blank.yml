@@ -14,10 +14,60 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ssh.lolipop.jp
+          username: boo.jp-daysweet
+          port: 2222
+          key: -----BEGIN RSA PRIVATE KEY-----
+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
+-----END RSA PRIVATE KEY-----
           script: |
-            cd ${{ secrets.SERVER_DEPLOY_DIR }}
+            cd ~/web/daysweet.boo.jp/sample/htdocs/
             git pull origin main
